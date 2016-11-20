@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/figoxu/utee"
+	"github.com/quexer/utee"
 	"os"
 )
 
