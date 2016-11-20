@@ -62,7 +62,7 @@ func (driver *FileDriver) Stat(path string) (IFileInfo, error) {
 		return nil, err
 	}
 	//todo user and group
-	return &FileInfo{f,  f.Mode(), driver.conn.user, "EVERYONE"}, nil
+	return &FileInfo{f, f.Mode(), driver.conn.user, "EVERYONE"}, nil
 }
 
 func (driver *FileDriver) ChangeDir(path string) error {
