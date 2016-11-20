@@ -7,7 +7,7 @@ type DriverFactory interface {
 }
 
 type Driver interface {
-	Init(*Conn)
+	Init(*Conn, *User)
 	Stat(string) (IFileInfo, error)
 	ChangeDir(string) error
 	ListDir(string, func(IFileInfo) error) error

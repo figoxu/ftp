@@ -48,6 +48,7 @@ func NewDataSource() *DataSource {
 }
 
 func (p *DataSource) searchByAccount(Account string) *User {
+	defer Figo.Catch()
 	user := &User{}
 	err := p.MYSQL.Raw("SELECT id,account,password,basepath from user where Account=?", Account).QueryRow(user)
 	utee.Chk(err)

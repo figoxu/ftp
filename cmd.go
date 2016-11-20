@@ -560,18 +560,11 @@ func (cmd commandPass) RequireAuth() bool {
 }
 
 func (cmd commandPass) Execute(conn *Conn, param string) {
-	//	ok, err := conn.server.Auth.CheckPasswd(conn.reqUser, param)
-	//	if err != nil {
-	//		conn.writeMessage(550, "Checking password error")
-	//		return
-	//	}
-	//todo check password here
-	ok := true
-	if ok {
+	if user := DS.searchByAccount(conn.reqUser); user.Password == param {
 		conn.user = conn.reqUser
 		conn.reqUser = ""
-		log.Println("@user:", conn.user, " time to init root dir")
-		conn.driver.Init(conn)
+		log.Println("===>>>>>> @Command Pass  >>> Init User")
+		conn.driver.Init(conn, user)
 		conn.writeMessage(230, "Password ok, continue")
 	} else {
 		conn.writeMessage(530, "Incorrect password, not logged in")

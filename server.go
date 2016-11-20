@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"crypto/tls"
+	"log"
 	"net"
 	"strconv"
 	"strings"
@@ -120,7 +121,7 @@ func (server *Server) newConn(tcpConn net.Conn, driver Driver) *Conn {
 	c.sessionID = newSessionID()
 	c.logger = newLogger(c.sessionID)
 	c.tlsConfig = server.tlsConfig
-	driver.Init(c)
+	driver.Init(c, nil)
 	return c
 }
 
@@ -175,6 +176,7 @@ func (server *Server) ListenAndServe() error {
 			server.logger.Printf("Error creating driver, aborting client connection: %v", err)
 			tcpConn.Close()
 		} else {
+			log.Println("===>>>>>> @tcpConn newConn")
 			ftpConn := server.newConn(tcpConn, driver)
 			go ftpConn.Serve()
 		}

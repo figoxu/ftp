@@ -41,12 +41,12 @@ func (driver *FileDriver) realPath(path string) string {
 	return filepath.Join(append([]string{driver.RootPath}, paths...)...)
 }
 
-func (driver *FileDriver) Init(conn *Conn) {
-	log.Println("====>")
-	log.Println("@conn.user:", conn.LoginUser(), " @isLogin: ", conn.IsLogin(), "  Init Permission Here ?   ")
-	driver.RootPath = "/home/figo/develop/env/"
-	log.Println("<====")
-	log.Println("should be init root path by conn user")
+func (driver *FileDriver) Init(conn *Conn, user *User) {
+	if user != nil {
+		driver.RootPath = user.Basepath
+	} else {
+		log.Println("[warn] init without user info")
+	}
 	driver.conn = conn
 }
 
@@ -65,9 +65,6 @@ func (driver *FileDriver) Stat(path string) (IFileInfo, error) {
 }
 
 func (driver *FileDriver) ChangeDir(path string) error {
-
-	log.Println("11==>@path:", path)
-	log.Println("@conn.user:", driver.conn.LoginUser(), " @isLogin: ", driver.conn.IsLogin())
 	rPath := driver.realPath(path)
 	f, err := os.Lstat(rPath)
 	if err != nil {
