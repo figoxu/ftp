@@ -48,10 +48,6 @@ type ServerOpts struct {
 	WelcomeMessage string
 }
 
-// Server is the root of your FTP application. You should instantiate one
-// of these and call ListenAndServe() to start accepting client connections.
-//
-// Always use the NewServer() method to create a new Server.
 type Server struct {
 	*ServerOpts
 	name          string
@@ -63,8 +59,6 @@ type Server struct {
 	publicIp      string
 }
 
-// serverOptsWithDefaults copies an ServerOpts struct into a new struct,
-// then adds any default values that are missing and returns the new data.
 func serverOptsWithDefaults(opts *ServerOpts) *ServerOpts {
 	var newOpts ServerOpts
 	if opts == nil {
@@ -93,10 +87,6 @@ func serverOptsWithDefaults(opts *ServerOpts) *ServerOpts {
 		newOpts.WelcomeMessage = opts.WelcomeMessage
 	}
 
-	//	if opts.Auth != nil {
-	//		newOpts.Auth = opts.Auth
-	//	}
-
 	newOpts.TLS = opts.TLS
 	newOpts.KeyFile = opts.KeyFile
 	newOpts.CertFile = opts.CertFile
@@ -108,23 +98,6 @@ func serverOptsWithDefaults(opts *ServerOpts) *ServerOpts {
 	return &newOpts
 }
 
-// NewServer initialises a new FTP server. Configuration options are provided
-// via an instance of ServerOpts. Calling this function in your code will
-// probably look something like this:
-//
-//     factory := &MyDriverFactory{}
-//     server  := server.NewServer(&server.ServerOpts{ Factory: factory })
-//
-// or:
-//
-//     factory := &MyDriverFactory{}
-//     opts    := &server.ServerOpts{
-//       Factory: factory,
-//       Port: 2000,
-//       Hostname: "127.0.0.1",
-//     }
-//     server  := server.NewServer(opts)
-//
 func NewServer(opts *ServerOpts) *Server {
 	opts = serverOptsWithDefaults(opts)
 	s := new(Server)
@@ -136,10 +109,6 @@ func NewServer(opts *ServerOpts) *Server {
 	return s
 }
 
-// NewConn constructs a new object that will handle the FTP protocol over
-// an active net.TCPConn. The TCP connection should already be open before
-// it is handed to this functions. driver is an instance of FTPDriver that
-// will handle all auth and persistence details.
 func (server *Server) newConn(tcpConn net.Conn, driver Driver) *Conn {
 	c := new(Conn)
 	c.namePrefix = "/"
@@ -147,7 +116,6 @@ func (server *Server) newConn(tcpConn net.Conn, driver Driver) *Conn {
 	c.controlReader = bufio.NewReader(tcpConn)
 	c.controlWriter = bufio.NewWriter(tcpConn)
 	c.driver = driver
-	//	c.auth = server.Auth
 	c.server = server
 	c.sessionID = newSessionID()
 	c.logger = newLogger(c.sessionID)
@@ -171,14 +139,6 @@ func simpleTLSConfig(certFile, keyFile string) (*tls.Config, error) {
 	return config, nil
 }
 
-// ListenAndServe asks a new Server to begin accepting client connections. It
-// accepts no arguments - all configuration is provided via the NewServer
-// function.
-//
-// If the server fails to start for any reason, an error will be returned. Common
-// errors are trying to bind to a privileged port or something else is already
-// listening on the same port.
-//
 func (server *Server) ListenAndServe() error {
 	var listener net.Listener
 	var err error
@@ -222,12 +182,10 @@ func (server *Server) ListenAndServe() error {
 	return nil
 }
 
-// Gracefully stops a server. Already connected clients will retain their connections
 func (server *Server) Shutdown() error {
 	if server.listener != nil {
 		return server.listener.Close()
 	}
-	// server wasnt even started
 	return nil
 }
 

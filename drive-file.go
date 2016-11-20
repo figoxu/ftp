@@ -14,7 +14,6 @@ import (
 type FileDriver struct {
 	RootPath string
 	conn     *Conn
-	//	server.Perm
 }
 
 type FileInfo struct {
