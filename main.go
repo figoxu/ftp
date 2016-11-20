@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	port, rootPath, ftpName := 21, "/home/figo", "Figo's FTP"
+	port, rootPath, ftpName := 21, "/", "Figo's FTP"
 	_, err := os.Lstat(rootPath)
 	if os.IsNotExist(err) {
 		os.MkdirAll(rootPath, os.ModePerm)

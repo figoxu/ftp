@@ -44,8 +44,8 @@ func (driver *FileDriver) realPath(path string) string {
 
 func (driver *FileDriver) Init(conn *Conn) {
 	log.Println("====>")
-	log.Println("@conn:", conn)
-	log.Println("@conn.user:", conn.LoginUser(), " @isLogin: ", conn.IsLogin())
+	log.Println("@conn.user:", conn.LoginUser(), " @isLogin: ", conn.IsLogin(), "  Init Permission Here ?   ")
+	driver.RootPath = "/home/figo/develop/env/"
 	log.Println("<====")
 	log.Println("should be init root path by conn user")
 	driver.conn = conn
@@ -61,28 +61,13 @@ func (driver *FileDriver) Stat(path string) (IFileInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	//	mode, err := driver.Perm.GetMode(path)
-	//	if err != nil {
-	//		return nil, err
-	//	}
-	//	if f.IsDir() {
-	//		mode |= os.ModeDir
-	//	}
-	//	owner, err := driver.Perm.GetOwner(path)
-	//	if err != nil {
-	//		return nil, err
-	//	}
-	//	group, err := driver.Perm.GetGroup(path)
-	//	if err != nil {
-	//		return nil, err
-	//	}
-	return &FileInfo{f, os.ModePerm, "owner", "group"}, nil
+	//todo user and group
+	return &FileInfo{f,  f.Mode(), driver.conn.user, "EVERYONE"}, nil
 }
 
 func (driver *FileDriver) ChangeDir(path string) error {
-	driver.RootPath = "/home/figo/develop"
 
-	log.Println("==>@path:", path)
+	log.Println("11==>@path:", path)
 	log.Println("@conn.user:", driver.conn.LoginUser(), " @isLogin: ", driver.conn.IsLogin())
 	rPath := driver.realPath(path)
 	f, err := os.Lstat(rPath)
@@ -97,25 +82,13 @@ func (driver *FileDriver) ChangeDir(path string) error {
 
 func (driver *FileDriver) ListDir(path string, callback func(IFileInfo) error) error {
 	basepath := driver.realPath(path)
+	log.Println("22==>@path:", path, "@basePath:", basepath)
 	filepath.Walk(basepath, func(f string, info os.FileInfo, err error) error {
 		rPath, _ := filepath.Rel(basepath, f)
+
 		if rPath == info.Name() {
-			//			mode, err := driver.Perm.GetMode(rPath)
-			//			if err != nil {
-			//				return err
-			//			}
-			//			if info.IsDir() {
-			//				mode |= os.ModeDir
-			//			}
-			//			owner, err := driver.Perm.GetOwner(rPath)
-			//			if err != nil {
-			//				return err
-			//			}
-			//			group, err := driver.Perm.GetGroup(rPath)
-			//			if err != nil {
-			//				return err
-			//			}
-			err = callback(&FileInfo{info, os.ModePerm, "owner", "group"})
+			//todo user and group
+			err = callback(&FileInfo{info, info.Mode(), driver.conn.user, "EVERYONE"})
 			if err != nil {
 				return err
 			}

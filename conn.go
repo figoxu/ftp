@@ -27,19 +27,19 @@ type Conn struct {
 	controlWriter *bufio.Writer
 	dataConn      DataSocket
 	driver        Driver
-	auth          Auth
-	logger        *Logger
-	server        *Server
-	tlsConfig     *tls.Config
-	sessionID     string
-	namePrefix    string
-	reqUser       string
-	user          string
-	renameFrom    string
-	lastFilePos   int64
-	appendData    bool
-	closed        bool
-	tls           bool
+	//	auth          Auth
+	logger      *Logger
+	server      *Server
+	tlsConfig   *tls.Config
+	sessionID   string
+	namePrefix  string
+	reqUser     string
+	user        string
+	renameFrom  string
+	lastFilePos int64
+	appendData  bool
+	closed      bool
+	tls         bool
 }
 
 func (conn *Conn) LoginUser() string {

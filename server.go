@@ -8,15 +8,13 @@ import (
 	"strings"
 )
 
-
-
 // serverOpts contains parameters for server.NewServer()
 type ServerOpts struct {
 	// The factory that will be used to create a new FTPDriver instance for
 	// each client connection. This is a mandatory option.
 	Factory DriverFactory
 
-	Auth Auth
+	//	Auth Auth
 
 	// Server Name, Default is Go Ftp Server
 	Name string
@@ -95,9 +93,9 @@ func serverOptsWithDefaults(opts *ServerOpts) *ServerOpts {
 		newOpts.WelcomeMessage = opts.WelcomeMessage
 	}
 
-	if opts.Auth != nil {
-		newOpts.Auth = opts.Auth
-	}
+	//	if opts.Auth != nil {
+	//		newOpts.Auth = opts.Auth
+	//	}
 
 	newOpts.TLS = opts.TLS
 	newOpts.KeyFile = opts.KeyFile
@@ -149,7 +147,7 @@ func (server *Server) newConn(tcpConn net.Conn, driver Driver) *Conn {
 	c.controlReader = bufio.NewReader(tcpConn)
 	c.controlWriter = bufio.NewWriter(tcpConn)
 	c.driver = driver
-	c.auth = server.Auth
+	//	c.auth = server.Auth
 	c.server = server
 	c.sessionID = newSessionID()
 	c.logger = newLogger(c.sessionID)
