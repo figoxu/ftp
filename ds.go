@@ -60,3 +60,21 @@ func (p *DataSource) save(user *User) *User {
 	utee.Chk(err)
 	return user
 }
+
+func (p *DataSource) update(user *User) *User {
+	_, err := p.MYSQL.Update(user)
+	utee.Chk(err)
+	return user
+}
+
+func (p *DataSource) delete(user *User) {
+	_, err := p.MYSQL.Delete(user)
+	utee.Chk(err)
+}
+
+func (p *DataSource) search() []User {
+	var users []User
+	_, err := p.MYSQL.Raw("SELECT id,account,password,basepath from user").QueryRows(&users)
+	utee.Chk(err)
+	return users
+}
