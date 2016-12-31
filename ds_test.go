@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/figoxu/Figo"
 	"log"
 	"testing"
 )
@@ -39,4 +40,18 @@ func TestSearch(t *testing.T) {
 	ds := getTestDs()
 	data := ds.search()
 	log.Println(data)
+}
+
+func TestUserDAO(t *testing.T) {
+	userManager := &Figo.Manager{
+		Dao: &UserDAO{
+			orm: getTestDs().MYSQL,
+		},
+	}
+	log.Println("CountALl is :", userManager.CountAll())
+	log.Println("QueryALl is :", userManager.QueryAll())
+	log.Println("CountFilter is :", userManager.CountFilter("Account='andy'"))
+	log.Println("QueryFilter is :", userManager.QueryFilter("Account='andy'"))
+	log.Println("QueryFilterPaging is :", userManager.QueryFilterPaging("Account='andy'", 0, 5))
+
 }

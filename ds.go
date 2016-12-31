@@ -78,3 +78,17 @@ func (p *DataSource) search() []User {
 	utee.Chk(err)
 	return users
 }
+
+type UserDAO struct {
+	orm orm.Ormer
+}
+
+func (p *UserDAO) GetORM() orm.Ormer {
+	return p.orm
+}
+func (p *UserDAO) GetItemContainer() interface{} {
+	return &User{}
+}
+func (p *UserDAO) GetItemsContainer() interface{} {
+	return &[]User{}
+}
