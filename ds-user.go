@@ -42,16 +42,18 @@ func (p *DataSource) search() []User {
 	return users
 }
 
-type UserDAO struct {
-	orm orm.Ormer
+type DAO struct {
+	orm   orm.Ormer
+	Item  interface{}
+	Items interface{}
 }
 
-func (p *UserDAO) GetORM() orm.Ormer {
+func (p *DAO) GetORM() orm.Ormer {
 	return p.orm
 }
-func (p *UserDAO) GetItemContainer() interface{} {
-	return &User{}
+func (p *DAO) GetItemContainer() interface{} {
+	return Figo.Clone(p.Item)
 }
-func (p *UserDAO) GetItemsContainer() interface{} {
-	return &[]User{}
+func (p *DAO) GetItemsContainer() interface{} {
+	return Figo.Clone(p.Items)
 }

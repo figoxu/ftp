@@ -40,9 +40,36 @@ func NewDataSource() *DataSource {
 		ConnActive: active,
 	}
 	conf.Conf(new(User))
+	DataReg("user", User{}, []User{})
 	orm.RunSyncdb("default", false, true)
 	ds := &DataSource{
 		MYSQL: orm.NewOrm(),
 	}
 	return ds
+}
+
+type DataInstance struct {
+	Item  interface{}
+	Items interface{}
+}
+
+var DataInstanceMap = make(map[string]*DataInstance)
+
+func DataReg(name string, item interface{}, items interface{}) {
+	DataInstanceMap[name] = &DataInstance{
+		Item:  item,
+		Items: items,
+	}
+}
+
+func GetDao(name string, orm orm.Ormer) *DAO {
+	v := DataInstanceMap[name]
+	if v == nil {
+		return nil
+	}
+	return &DAO{
+		orm:   orm,
+		Item:  &v.Item,
+		Items: &v.Items,
+	}
 }

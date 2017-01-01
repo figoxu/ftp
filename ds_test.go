@@ -44,9 +44,7 @@ func TestSearch(t *testing.T) {
 
 func TestUserDAO(t *testing.T) {
 	userManager := &Figo.Manager{
-		Dao: &UserDAO{
-			orm: getTestDs().MYSQL,
-		},
+		Dao: GetDao("user", getTestDs().MYSQL),
 	}
 	log.Println("CountALl is :", userManager.CountAll())
 	log.Println("QueryALl is :", userManager.QueryAll())
