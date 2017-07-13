@@ -86,8 +86,8 @@ func (p *DiskDriver) DeleteDir(path string) bool {
 func (p *DiskDriver) DeleteFile(path string) bool {
 	path = p.RealPath(path)
 	log.Printf("DeleteFile: %s", path)
-	f, err := os.Lstat(path)
-	if err != nil || f.IsDir() {
+	_, err := os.Lstat(path)
+	if err != nil {
 		return false
 	}
 	os.Remove(path)
@@ -106,13 +106,10 @@ func (p *DiskDriver) MakeDir(path string) bool {
 
 func (p *DiskDriver) GetFile(path string, position int64) (io.ReadCloser, bool) {
 	path = p.RealPath(path)
-	log.Println("GETFILE 00001 @path:", path)
 	if f, err := os.Stat(path); err == nil && !f.IsDir() {
-		log.Println("GETFILE 00002")
 		b, _ := ioutil.ReadFile(path)
 		return ioutil.NopCloser(bytes.NewReader(b[position:])), true
 	} else {
-		log.Println("GETFILE 00003")
 		return nil, false
 	}
 
