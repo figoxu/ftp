@@ -1,18 +1,16 @@
 package main
 
 import (
-	"crypto/tls"
 	"errors"
-	"fmt"
 	"net"
 	"strconv"
 	"strings"
-	"sync"
+	"time"
 )
 
 // A data socket is used to send non-control data between the client and
 // server.
-type DataSocket interface {
+type ftpDataSocket interface {
 	Host() string
 
 	Port() int
@@ -28,37 +26,30 @@ type DataSocket interface {
 }
 
 type ftpActiveSocket struct {
-	conn   *net.TCPConn
-	host   string
-	port   int
-	logger *Logger
+	conn *net.TCPConn
+	host string
+	port int
+	logger *ftpLogger
 }
 
-func newActiveSocket(remote string, port int, logger *Logger) (DataSocket, error) {
-	connectTo := buildTCPString(remote, port)
-
+func newActiveSocket(host string, port int, logger *ftpLogger) (ftpDataSocket, error) {
+	connectTo := buildTcpString(host, port)
 	logger.Print("Opening active data connection to " + connectTo)
-
 	raddr, err := net.ResolveTCPAddr("tcp", connectTo)
-
 	if err != nil {
 		logger.Print(err)
 		return nil, err
 	}
-
 	tcpConn, err := net.DialTCP("tcp", nil, raddr)
-
 	if err != nil {
 		logger.Print(err)
 		return nil, err
 	}
-
 	socket := new(ftpActiveSocket)
 	socket.conn = tcpConn
-	socket.host = remote
+	socket.host = host
 	socket.port = port
 	socket.logger = logger
-
 	return socket, nil
 }
 
@@ -82,32 +73,32 @@ func (socket *ftpActiveSocket) Close() error {
 	return socket.conn.Close()
 }
 
+
 type ftpPassiveSocket struct {
-	conn       net.Conn
-	port       int
-	host       string
-	ingress    chan []byte
-	egress     chan []byte
-	logger     *Logger
-	wg         sync.WaitGroup
-	tlsConfing *tls.Config
+	conn     *net.TCPConn
+	port     int
+	ingress  chan []byte
+	egress   chan []byte
+	logger   *ftpLogger
 }
 
-func newPassiveSocket(host string, port int, logger *Logger, tlsConfing *tls.Config) (DataSocket, error) {
+func newPassiveSocket(logger *ftpLogger) (ftpDataSocket, error) {
 	socket := new(ftpPassiveSocket)
 	socket.ingress = make(chan []byte)
 	socket.egress = make(chan []byte)
 	socket.logger = logger
-	socket.host = host
-	socket.port = port
-	if err := socket.GoListenAndServe(); err != nil {
-		return nil, err
+	go socket.ListenAndServe()
+	for {
+		if socket.Port() > 0 {
+			break
+		}
+		time.Sleep(100 * time.Millisecond)
 	}
 	return socket, nil
 }
 
 func (socket *ftpPassiveSocket) Host() string {
-	return socket.host
+	return "127.0.0.1"
 }
 
 func (socket *ftpPassiveSocket) Port() int {
@@ -129,58 +120,48 @@ func (socket *ftpPassiveSocket) Write(p []byte) (n int, err error) {
 }
 
 func (socket *ftpPassiveSocket) Close() error {
-	//socket.logger.Print("closing passive data socket")
-	if socket.conn != nil {
-		return socket.conn.Close()
-	}
-	return nil
+	socket.logger.Print("closing passive data socket")
+	return socket.conn.Close()
 }
 
-func (socket *ftpPassiveSocket) GoListenAndServe() (err error) {
-	laddr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf("0.0.0.0:%d", socket.port))
+func (socket *ftpPassiveSocket) ListenAndServe() {
+	laddr, err := net.ResolveTCPAddr("tcp", socket.Host()+":0")
 	if err != nil {
 		socket.logger.Print(err)
 		return
 	}
-
-	var listener net.Listener
-	listener, err = net.ListenTCP("tcp", laddr)
+	listener, err := net.ListenTCP("tcp", laddr)
 	if err != nil {
 		socket.logger.Print(err)
 		return
 	}
-
-	add := listener.Addr()
+	add   := listener.Addr()
 	parts := strings.Split(add.String(), ":")
-	port, err := strconv.Atoi(parts[len(parts)-1])
+	port, err := strconv.Atoi(parts[1])
+	if err == nil {
+		socket.port = port
+	}
+	tcpConn, err := listener.AcceptTCP()
 	if err != nil {
 		socket.logger.Print(err)
 		return
 	}
-
-	socket.port = port
-	socket.wg.Add(1)
-
-	if socket.tlsConfing != nil {
-		listener = tls.NewListener(listener, socket.tlsConfing)
-	}
-
-	go func() {
-		conn, err := listener.Accept()
-		socket.wg.Done()
-		if err != nil {
-			socket.logger.Print(err)
-			return
-		}
-		socket.conn = conn
-	}()
-	return nil
+	socket.conn = tcpConn
 }
 
 func (socket *ftpPassiveSocket) waitForOpenSocket() bool {
-	if socket.conn != nil {
-		return true
+	retries := 0
+	for {
+		if socket.conn != nil {
+			break
+		}
+		if retries > 3 {
+			return false
+		}
+		socket.logger.Print("sleeping, socket isn't open")
+		time.Sleep(500 * time.Millisecond)
+		retries += 1
 	}
-	socket.wg.Wait()
-	return socket.conn != nil
+	return true
 }
+

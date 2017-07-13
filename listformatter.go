@@ -1,52 +1,52 @@
 package main
 
 import (
-	"bytes"
-	"fmt"
 	"github.com/jehiah/go-strftime"
 	"os"
 	"strconv"
 	"strings"
 )
 
-type IFileInfo interface {
-	os.FileInfo
-
-	Owner() string
-	Group() string
+type listFormatter struct {
+	files    []os.FileInfo
 }
 
-type listFormatter []IFileInfo
+func newListFormatter(files []os.FileInfo) *listFormatter {
+	f := new(listFormatter)
+	f.files = files
+	return f
+}
 
 // Short returns a string that lists the collection of files by name only,
 // one per line
-func (formatter listFormatter) Short() []byte {
-	var buf bytes.Buffer
-	for _, file := range formatter {
-		fmt.Fprintf(&buf, "%s\r\n", file.Name())
+func (formatter *listFormatter) Short() string {
+	output := ""
+	for _, file := range formatter.files {
+		output += file.Name() + "\r\n"
 	}
-	fmt.Fprintf(&buf, "\r\n")
-	return buf.Bytes()
+	output += "\r\n"
+	return output
 }
 
 // Detailed returns a string that lists the collection of files with extra
 // detail, one per line
-func (formatter listFormatter) Detailed() []byte {
-	var buf bytes.Buffer
-	for _, file := range formatter {
-		fmt.Fprintf(&buf, file.Mode().String())
-		fmt.Fprintf(&buf, " 1 %s %s ", file.Owner(), file.Group())
-		fmt.Fprintf(&buf, lpad(strconv.Itoa(int(file.Size())), 12))
-		fmt.Fprintf(&buf, strftime.Format(" %b %d %H:%M ", file.ModTime()))
-		fmt.Fprintf(&buf, "%s\r\n", file.Name())
+func (formatter *listFormatter) Detailed() string {
+	output := ""
+	for _, file := range formatter.files {
+		output += file.Mode().String()
+		output += " 1 owner group "
+		output += lpad(strconv.Itoa(int(file.Size())), 12)
+		output += " " + strftime.Format("%b %d %H:%M", file.ModTime())
+		output += " " + file.Name()
+		output += "\r\n"
 	}
-	fmt.Fprintf(&buf, "\r\n")
-	return buf.Bytes()
+	output += "\r\n"
+	return output
 }
 
 func lpad(input string, length int) (result string) {
 	if len(input) < length {
-		result = strings.Repeat(" ", length-len(input)) + input
+		result = strings.Repeat(" ", length-len(input))+input
 	} else if len(input) == length {
 		result = input
 	} else {
