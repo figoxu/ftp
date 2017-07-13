@@ -8,11 +8,13 @@ import (
 )
 
 func main() {
-	host := "0.0.0.0"
-	port := 8021
-
 	cfg, err := config.NewConfig("ini", "conf.ini")
 	utee.Chk(err)
+
+	host := cfg.String("ftp::host")
+	port,err := cfg.Int("ftp::port")
+	utee.Chk(err)
+
 	G_CFG = cfg
 	server := graval.NewFTPServer(&graval.FTPServerOpts{
 		ServerName: "Example FTP server",
