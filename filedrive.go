@@ -59,8 +59,11 @@ func (p *DiskDriver) ChangeDir(path string) bool {
 
 func (p *DiskDriver) DirContents(path string) ([]os.FileInfo, bool) {
 	fileInfos := make([]os.FileInfo, 0)
-	filepath.Walk(p.RealPath(path), func(f string, info os.FileInfo, err error) error {
-		if info == nil || path == fmt.Sprint("/", info.Name()) {
+	realPath := p.RealPath(path)
+	filepath.Walk(realPath, func(f string, info os.FileInfo, err error) error {
+		if info == nil || path == fmt.Sprint("/", info.Name() ) {
+			return nil
+		}else if f== realPath ||fmt.Sprint(f,"/")== realPath {
 			return nil
 		}
 		fileInfos = append(fileInfos, info)
