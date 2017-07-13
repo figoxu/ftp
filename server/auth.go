@@ -1,9 +1,8 @@
 package server
 
-import "crypto/tls"
 import (
 	"bufio"
-	"log"
+	"crypto/tls"
 )
 
 func (p *Paradise) HandleUser() {
