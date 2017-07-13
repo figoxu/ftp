@@ -1,7 +1,10 @@
 package server
 
 import "crypto/tls"
-import "bufio"
+import (
+	"bufio"
+	"log"
+)
 
 func (p *Paradise) HandleUser() {
 	p.user = p.param
