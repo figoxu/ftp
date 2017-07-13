@@ -151,5 +151,14 @@ func main() {
 	cfg, err := config.NewConfig("ini", "conf.ini")
 	utee.Chk(err)
 	G_CFG = cfg
-	utee.Chk(NewFTPServer(&FTPServerOpts{Factory: &DiskDriverFactory{} }).ListenAndServe())
+	port,err := cfg.Int("ftp::port")
+	utee.Chk(err)
+	opts := &FTPServerOpts{
+		Hostname:cfg.String("ftp::host"),
+		Port:port,
+		Factory: &DiskDriverFactory{},
+	}
+	ftpServer := NewFTPServer(opts)
+	utee.Chk(ftpServer.ListenAndServe())
 }
+
