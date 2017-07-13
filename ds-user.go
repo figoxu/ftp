@@ -4,13 +4,17 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/figoxu/Figo"
 	"github.com/quexer/utee"
+	"log"
 )
 
 func (p *DataSource) searchByAccount(Account string) *User {
 	defer Figo.Catch()
 	user := &User{}
-	err := p.MYSQL.Raw("SELECT id,account,password,basepath from user where Account=?", Account).QueryRow(user)
-	utee.Chk(err)
+	err := p.MYSQL.Raw("SELECT id,account,password,basepath from user where account=?", Account).QueryRow(user)
+	if err!= nil {
+		return nil
+	}
+	log.Println("@user : ",user.Password," basePath:",user.Basepath)
 	return user
 }
 

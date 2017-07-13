@@ -45,5 +45,5 @@ func startHttp() {
 		r.Put("/user", HandlerUsersModify)
 		r.Delete("/user/:id", HandlerUsersDelete)
 	}, midUserMng)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":9999", nil))
 }

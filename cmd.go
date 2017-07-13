@@ -560,7 +560,7 @@ func (cmd commandPass) RequireAuth() bool {
 }
 
 func (cmd commandPass) Execute(conn *Conn, param string) {
-	if user := DS.searchByAccount(conn.reqUser); user.Password == param {
+	if user := DS.searchByAccount(conn.reqUser); user!=nil && user.Password == param {
 		conn.user = conn.reqUser
 		conn.reqUser = ""
 		log.Println("===>>>>>> @Command Pass  >>> Init User")
