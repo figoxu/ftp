@@ -1,0 +1,1 @@
+nohup ./ftp >> ftp.log 2>&1 &
