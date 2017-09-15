@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/astaxie/beego/config"
-	"github.com/figoxu/utee"
+	"github.com/quexer/utee"
 	"github.com/koofr/graval"
 	"log"
 )

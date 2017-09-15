@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"time"
+	"github.com/figoxu/Figo"
 )
 
 var G_CFG config.Configer
@@ -53,6 +54,12 @@ func (p *DiskDriver) ModifiedTime(path string) (time.Time, bool) {
 }
 
 func (p *DiskDriver) ChangeDir(path string) bool {
+	path = p.RealPath(path)
+	futee:=Figo.FileUtee{}
+	if !futee.Exist(path) {
+		os.Mkdir(path,os.ModePerm)
+	}
+	log.Println(">>>>>>>>>>>>>>CHANGE_DIR>>>>>>>> : ",path)
 	return true
 }
 
