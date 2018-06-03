@@ -1,0 +1,42 @@
+<%= form_with(model: host, local: true) do |form| %>
+  <% if host.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(host.errors.count, "error") %> prohibited this host from being saved:</h2>
+
+      <ul>
+      <% host.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :ip_listen %>
+    <%= form.text_field :ip_listen, id: :host_ip_listen %>
+  </div>
+
+  <div class="field">
+    <%= form.label :ip_serv %>
+    <%= form.text_field :ip_serv, id: :host_ip_serv %>
+  </div>
+
+  <div class="field">
+    <%= form.label :port %>
+    <%= form.number_field :port, id: :host_port %>
+  </div>
+
+  <div class="field">
+    <%= form.label :port_passive_begin %>
+    <%= form.number_field :port_passive_begin, id: :host_port_passive_begin %>
+  </div>
+
+  <div class="field">
+    <%= form.label :port_passive_end %>
+    <%= form.number_field :port_passive_end, id: :host_port_passive_end %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

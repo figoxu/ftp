@@ -18,3 +18,6 @@ u.password = '12344321'
 u.save
 ```
 
+
+rails generate scaffold  Host ip_listen:string ip_serv:string port:integer port_passive_begin:integer port_passive_end:integer
+ 

@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Hosts</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ip listen</th>
+      <th>Ip serv</th>
+      <th>Port</th>
+      <th>Port passive begin</th>
+      <th>Port passive end</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @hosts.each do |host| %>
+      <tr>
+        <td><%= host.ip_listen %></td>
+        <td><%= host.ip_serv %></td>
+        <td><%= host.port %></td>
+        <td><%= host.port_passive_begin %></td>
+        <td><%= host.port_passive_end %></td>
+        <td><%= link_to 'Show', host %></td>
+        <td><%= link_to 'Edit', edit_host_path(host) %></td>
+        <td><%= link_to 'Destroy', host, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Host', new_host_path %>

@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Ip listen:</strong>
+  <%= @host.ip_listen %>
+</p>
+
+<p>
+  <strong>Ip serv:</strong>
+  <%= @host.ip_serv %>
+</p>
+
+<p>
+  <strong>Port:</strong>
+  <%= @host.port %>
+</p>
+
+<p>
+  <strong>Port passive begin:</strong>
+  <%= @host.port_passive_begin %>
+</p>
+
+<p>
+  <strong>Port passive end:</strong>
+  <%= @host.port_passive_end %>
+</p>
+
+<%= link_to 'Edit', edit_host_path(@host) %> |
+<%= link_to 'Back', hosts_path %>
