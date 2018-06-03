@@ -1,10 +1,10 @@
 // Place all the styles related to the Login controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
-body {
+.login_panel {
   background: url("1.jpg");
   color: white;
-  animation-name: myfirst;
+  animation-name: loginbg;
   animation-duration: 12s;
   /*变换时间*/
   animation-delay: 2s;
@@ -15,7 +15,7 @@ body {
   /*动画开始运行*/
 }
 
-@keyframes myfirst {
+@keyframes loginbg {
   0% {
     background: url("1.jpg");
   }

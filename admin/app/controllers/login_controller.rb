@@ -15,7 +15,7 @@ class LoginController < ApplicationController
       render 'index'
     else
       session[:user] = @user
-      # return "index"
+      redirect_to hosts_path
     end
   end
 
