@@ -1,29 +1,32 @@
-<p id="notice"><%= notice %></p>
+<p class="form-group" id="notice"><%= notice %></p>
 
-<p>
-  <strong>Ip listen:</strong>
-  <%= @host.ip_listen %>
-</p>
+<%= link_to 'Edit', edit_host_path(@host),:class => 'btn btn-info btn-xs active' %> |
+<%= link_to 'Back', hosts_path ,:class => 'btn btn-info btn-xs active'%>
 
-<p>
-  <strong>Ip serv:</strong>
-  <%= @host.ip_serv %>
-</p>
+<div class="form-horizontal">
 
-<p>
-  <strong>Port:</strong>
-  <%= @host.port %>
-</p>
+  <p class="form-group">
+    <label class="col-sm-2 control-label">Ip listen:</label>
+  <span class="col-sm-10" > <%= @host.ip_listen %> </span>
+  </p>
 
-<p>
-  <strong>Port passive begin:</strong>
-  <%= @host.port_passive_begin %>
-</p>
+  <p class="form-group">
+    <label class="col-sm-2 control-label">Ip serv:</label>
+    <span class="col-sm-10" > <%= @host.ip_serv %> </span>
+  </p>
 
-<p>
-  <strong>Port passive end:</strong>
-  <%= @host.port_passive_end %>
-</p>
+  <p class="form-group">
+    <label class="col-sm-2 control-label">Port:</label>
+    <span class="col-sm-10" > <%= @host.port %> </span>
+  </p>
 
-<%= link_to 'Edit', edit_host_path(@host) %> |
-<%= link_to 'Back', hosts_path %>
+  <p class="form-group">
+    <label class="col-sm-2 control-label">Port passive begin:</label>
+    <span class="col-sm-10" > <%= @host.port_passive_begin %> </span>
+  </p>
+
+  <p class="form-group">
+    <label class="col-sm-2 control-label">Port passive end:</label>
+    <span class="col-sm-10" > <%= @host.port_passive_end %> </span>
+  </p>
+</div>
